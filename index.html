@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Captura de Datos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+
+    html{      width: 110%;
+      zoom: 310%;}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #f5f5f5;
+      margin: 0;
+      padding: 40px;
+      opacity: 0;
+      animation: fadeInBody 1s ease-in forwards;
+    }
+
+    @keyframes fadeInBody {
+      to { opacity: 1; }
+    }
+    @media screen and (max-width: 400px) {
+  body {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+    h2 {
+      color: #e0b341;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+      border-bottom: 2px solid #e0b341;
+      padding-bottom: 10px;
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: slideFadeIn 0.6s ease-out forwards;
+    }
+
+    form {
+      max-width: 250px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(224, 179, 65, 0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideFadeIn 0.8s ease-out forwards;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes slideFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateX(-30px);
+      animation: fadeInGroup 0.6s ease-out forwards;
+    }
+
+    .input-group:nth-child(n+1) { animation-delay: 0.3s; }
+
+    @keyframes fadeInGroup {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #e0e0e0;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #2a2a2a;
+      color: #fff;
+      transition: border-color 0.3s ease, transform 0.2s ease;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #e0b341;
+      transform: scale(1.02);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #e0b341;
+      border: none;
+      border-radius: 6px;
+      color: #121212;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeInButton 0.6s ease-out forwards;
+      animation-delay: 1.3s;
+    }
+
+    button:hover {
+      background-color: #f0c85c;
+      transform: scale(1.02);
+    }
+
+    @keyframes fadeInButton {
+      to { opacity: 1; }
+    }
+
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 20px;
+      }
+
+      form {
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      input[type="text"],
+      select {
+        font-size: 14px;
+        padding: 8px 10px;
+      }
+
+      button {
+        font-size: 15px;
+        padding: 10px;
+      }
+    }
+
+
+.half-input {
+  flex: 1;
+  min-width: 200px;
+}
+.input-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: 500px) {
+  .half-input {
+    flex: 1 1 100%;
+  }
+}
+
+
+.condicionales {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.extras-contenedor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.extra-boton {
+  background-color: transparent;
+  color: yellow;
+  border: 2px solid yellow;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.extra-boton.activo {
+  background-color: yellow;
+  color: #111;
+  border-color: #111;
+}
+
+.total-display {
+  margin-top: 20px;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+.extras-contenedor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+
+.extra-boton.activo {
+  background-color: yellow;
+  color: #111;
+  border-color: #111;
+}
+  </style>
+</head>
+<body>
+
+  <h2>Datos</h2>
+  <form id="dataForm">
+    <div class="input-group">
+      <label for="marca">Marca</label>
+      <select id="marca" onchange="actualizarVersiones()">
+        <option value="">Selecciona una marca</option>
+        <option value="Toyota">Toyota</option>
+        <option value="Nissan">Nissan</option>
+        <option value="Ford">Ford</option>
+        <option value="Volkswagen">Volkswagen</option>
+        <option value="Chevrolet">Chevrolet</option>
+        <option value="Honda">Honda</option>
+        <option value="Mazda">Mazda</option>
+        <option value="KIA">KIA</option>
+        <option value="Hyundai">Hyundai</option>
+        <option value="Mitsibushi">Mitsibushi</option>
+        <option value="AUDI">AUDI</option>
+        <option value="BMW">BMW</option>
+        <option value="Dodge">Dodge</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="version">Versión</label>
+      <select id="version">
+        <option value="">Selecciona una versión</option>
+      </select>
+    </div>
+</div>
+  <div class="half-input">
+    <label for="campo1">NIV</label>
+<input type="text" style="width: 200px;" id="niv">
+  </div>
+
+  <div class="half-input">
+    <label for="campo2">Número de Motor</label>
+    <input type="text" style="width: 200px;" id="motor">
+  </div>
+
+  <div>
+    <label for="modelo">Modelo</label>
+    <select id="modelo">
+      <option value="">Año</option>>
+    </select>
+  </div>
+    </select>
+
+  <div>
+    <label for="puertas">Puertas</label>
+    <select id="puertas">
+      <option value="">#</option>
+      <option value="2">2</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="cilindros">Cilindros</label>
+    <select id="cilindros">
+      <option value="">#</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="8">8</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="transmision">Transmisión</label>
+    <select id="transmision">
+      <option value="">Selecciona</option>
+      <option value="Manual">Manual</option>
+      <option value="Automática">Automática</option>
+      <option value="CVT">CVT</option>
+      <option value="DSG">DSG</option>
+    </select>
+  </div>
+</div>
+  </div>
+
+      <div>
+    <label for="color">Color</label>
+    <select id="color">
+  <option value="">Selecciona</option>
+</select>
+  </div>
+
+         <div>
+    <label for="colorint">Color Interior</label>
+    <select id="colorint">
+      <option value="">Selecciona</option>
+ <option value="negro">Negro</option>
+<option value="blanco">Blanco</option>
+<option value="gris">Gris</option>
+<option value="beige">Beige</option>
+<option value="naranja">Naranja</option>
+<option value="amarillo">Amarillo</option>
+<option value="verde">Verde</option>
+<option value="azul">Azul</option>
+<option value="morado">Morado</option>
+<option value="rosa">Rosa</option>
+<option value="cafe">Cafe</option>
+<option value="rojo">Rojo</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="int">Tipo</label>
+    <select id="int">
+      <option value="">Selecciona</option>
+      <option value="Tela">Tela</option>
+      <option value="Piel">Piel</option>
+    </select>
+  </div>
+    </div>
+    <div class="input-group">
+      <label for="campo6">Placa</label>
+      <input type="text" style="width: 150px;" id="placa">
+    </div>
+    <div class="input-group">
+      <label for="campo9">Estado</label>
+      <select id="estado">
+        <option value="">Selecciona un estado</option>
+        <option>Aguascalientes</option>
+        <option>Baja California</option>
+        <option>Baja California Sur</option>
+        <option>Campeche</option>
+        <option>Chiapas</option>
+        <option>Chihuahua</option>
+        <option>CDMX</option>
+        <option>Coahuila</option>
+        <option>Colima</option>
+        <option>Durango</option>
+        <option>Estado de México</option>
+        <option>Guanajuato</option>
+        <option>Guerrero</option>
+        <option>Hidalgo</option>
+        <option>Jalisco</option>
+        <option>Michoacán</option>
+        <option>Morelos</option>
+        <option>Nayarit</option>
+        <option>Nuevo León</option>
+        <option>Oaxaca</option>
+        <option>Puebla</option>
+        <option>Querétaro</option>
+        <option>Quintana Roo</option>
+        <option>San Luis Potosí</option>
+        <option>Sinaloa</option>
+        <option>Sonora</option>
+        <option>Tabasco</option>
+        <option>Tamaulipas</option>
+        <option>Tlaxcala</option>
+        <option>Veracruz</option>
+        <option>Yucatán</option>
+        <option>Zacatecas</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grupo-condicional" id="bloqueDueno">
+  <label for="primerDueno">¿Es primer dueño?</label>
+  <select id="primerDueno">
+    <option value="">Selecciona</option>
+    <option value="si">Sí</option>
+    <option value="no">No</option>
+  </select>
+
+  <div class="condicionales extra-dueño" id="datosDuenoAnterior" style="display: none; width: 200px; ">
+    <input type="text" id="duenoactual" placeholder="Nombre dueño actual">
+    
+    <select id="anocambio" style="height: 48px;">
+      <option value="">Desde cuándo</option>
+      <option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="2023">2023</option>
+<option value="2022">2022</option>
+<option value="2021">2021</option>
+<option value="2020">2020</option>
+<option value="2019">2019</option>
+<option value="2018">2018</option>
+<option value="2017">2017</option>
+<option value="2016">2016</option>
+    </select>
+  </div>
+</div>
+<div class="grupo-condicional" id="bloqueCambioPlacas">
+  <div class="campo">
+    <label for="cambioPlacas">¿Hubo cambio de placas?</label>
+    <select id="cambioPlacas">
+      <option value="">Selecciona</option>
+      <option value="si">Sí</option>
+      <option value="no">No</option>
+    </select>
+  </div>
+
+  <div class="condicionales extra-placas" id="datosCambioPlacas" style="display: none;">
+    <div class="campo">
+      <label for="nuevaPlaca">Placa actual</label>
+      <input type="text" id="nuevaplaca">
+    </div>
+
+    <div class="campo">
+      <label for="anioCambioPlaca">Desde qué año</label>
+      <select id="anocambioplaca">
+        <option value="">Año</option>
+        <option value="2025">2025</option>
+<option value="2024">2024</option>
+<option value="2023">2023</option>
+<option value="2022">2022</option>
+<option value="2021">2021</option>
+<option value="2020">2020</option>
+<option value="2019">2019</option>
+<option value="2018">2018</option>
+<option value="2017">2017</option>
+<option value="2016">2016</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="estadoPlaca">Estado de la placa</label>
+      <select id="estadoplacanueva">
+        <option value="">Selecciona estado</option>
+        <option value="Aguascalientes">Aguascalientes</option>
+        <option value="Baja California">Baja California</option>
+        <option value="Baja California Sur">Baja California Sur</option>
+        <option value="Campeche">Campeche</option>
+        <option value="Chiapas">Chiapas</option>
+        <option value="Chihuahua">Chihuahua</option>
+        <option value="Ciudad de México">Ciudad de México</option>
+        <option value="Coahuila">Coahuila</option>
+        <option value="Colima">Colima</option>
+        <option value="Durango">Durango</option>
+        <option value="Estado de México">Estado de México</option>
+        <option value="Guanajuato">Guanajuato</option>
+        <option value="Guerrero">Guerrero</option>
+        <option value="Hidalgo">Hidalgo</option>
+        <option value="Jalisco">Jalisco</option>
+        <option value="Michoacán">Michoacán</option>
+        <option value="Morelos">Morelos</option>
+        <option value="Nayarit">Nayarit</option>
+        <option value="Nuevo León">Nuevo León</option>
+        <option value="Oaxaca">Oaxaca</option>
+        <option value="Puebla">Puebla</option>
+        <option value="Querétaro">Querétaro</option>
+        <option value="Quintana Roo">Quintana Roo</option>
+        <option value="San Luis Potosí">San Luis Potosí</option>
+        <option value="Sinaloa">Sinaloa</option>
+        <option value="Sonora">Sonora</option>
+        <option value="Tabasco">Tabasco</option>
+        <option value="Tamaulipas">Tamaulipas</option>
+        <option value="Tlaxcala">Tlaxcala</option>
+        <option value="Veracruz">Veracruz</option>
+        <option value="Yucatán">Yucatán</option>
+        <option value="Zacatecas">Zacatecas</option>
+      </select>
+    </div>
+  </div>
+</div>
+<h3>Extras</h3>
+<p>Se requiere un 50% de anticipo para empezar la produccion</p>
+<div id="extras" class="extras-contenedor">
+  <button type="button" class="extra-boton" data-costo="100" id="docf">Fisicos ($100)</button>
+  <button type="button" class="extra-boton" data-costo="200" id="tarj">Tarjeta de Circulación ($200)</button>
+  <button type="button" class="extra-boton" data-costo="200" id="lice">Licencia ($200)</button>
+  <button type="button" class="extra-boton" data-costo="100" id="cart">Carta factura ($100)</button>
+  <button type="button" class="extra-boton" data-costo="100" id="tick">Ticket factura($100)</button>
+  <button type="button" class="extra-boton" data-costo="200" id="engo">Engomado ($200)</button>
+  <button type="button" class="extra-boton" data-costo="200" id="agen">Carpeta Agencia ($200)</button>
+  <button type="button" class="extra-boton" data-costo="200" id="segu">Carpeta Seguro ($200)</button>
+  <button type="button" class="extra-boton" data-costo="150" id="jala">Jaladera (Honda) ($150)</button>
+  <button type="button" class="extra-boton" data-costo="250" id="mser">Manual de servicio ($250)</button>
+  <button type="button" class="extra-boton" data-costo="600" id="musu">Manual de usuario ($600)</button>
+  <button type="button" class="extra-boton" data-costo="1000" id="domi">Domicilio ($1000)</button>
+</div>
+
+<div id="total" class="total-display">
+  Total: $700
+</div>
+
+<script>
+
+// Resumen de extras activos
+function obtenerResumenDeExtras() {
+  const botones = document.querySelectorAll(".extra-boton");
+  const seleccionados = [];
+  let total = 700;
+
+  botones.forEach(boton => {
+    if (boton.classList.contains("activo")) {
+      const nombre = boton.textContent.trim();
+      const precio = parseFloat(boton.dataset.costo);
+      seleccionados.push({ nombre, precio });
+      total += precio;
+    }
+  });
+
+  return { total, extras: seleccionados };
+}
+
+// Convierte total a letras (simplificado, sin decimales)
+function convertirNumeroALetras(num) {
+  const unidades = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+  const especiales = {
+    10:"diez",11:"once",12:"doce",13:"trece",14:"catorce",15:"quince",
+    16:"dieciséis",17:"diecisiete",18:"dieciocho",19:"diecinueve"
+  };
+  const decenas = ["", "", "veinte", "treinta", "cuarenta", "cincuenta",
+                   "sesenta", "setenta", "ochenta", "noventa"];
+  const centenas = ["", "ciento", "doscientos", "trescientos", "cuatrocientos",
+                    "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+
+  function grupo(n) {
+    if (n === 100) return "cien";
+    let t = "";
+    if (n > 99) t += centenas[Math.floor(n / 100)] + " ";
+    n %= 100;
+    if (n >= 10 && n <= 19) return t + especiales[n];
+    if (n >= 20) t += decenas[Math.floor(n / 10)] + (n % 10 !== 0 ? " y " + unidades[n % 10] : "");
+    else if (n > 0) t += unidades[n];
+    return t.trim();
+  }
+
+  function miles(n) {
+    if (n < 1000) return grupo(n);
+    const m = Math.floor(n / 1000);
+    const r = n % 1000;
+    let t = m === 1 ? "mil" : grupo(m) + " mil";
+    if (r > 0) t += " " + grupo(r);
+    return t.trim();
+  }
+
+  function millones(n) {
+    if (n < 1000000) return miles(n);
+    const m = Math.floor(n / 1000000);
+    const r = n % 1000000;
+    let t = m === 1 ? "un millón" : grupo(m) + " millones";
+    if (r > 0) t += " " + miles(r);
+    return t.trim();
+  }
+
+  return millones(num) + " pesos";
+}
+  document.addEventListener("DOMContentLoaded", () => {
+    const cambioPlacas = document.getElementById("cambioPlacas");
+    const datosCambio = document.getElementById("datosCambioPlacas");
+    const anocambio = document.getElementById("anocambioplaca");
+
+    cambioPlacas.addEventListener("change", () => {
+      datosCambio.style.display = cambioPlacas.value === "si" ? "flex" : "none";
+    });
+
+    // Llenar años
+    const añoActual = new Date().getFullYear();
+    for (let y = añoActual; y >= 2016; y--) {
+      anocambio.add(new Option(y, y));
+    }
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const primerDueno = document.getElementById("primerDueno");
+    const contenedor = document.getElementById("datosDuenoAnterior");
+    const desde = document.getElementById("desdeCuantoDuenoAnterior");
+
+    primerDueno.addEventListener("change", () => {
+      contenedor.style.display = primerDueno.value === "no" ? "flex" : "none";
+    });
+
+    // Llenado de años
+    const añoActual = new Date().getFullYear();
+    for (let y = añoActual; y >= 2016; y--) {
+      desde.add(new Option(y, y));
+    }
+  });
+</script>
+    <button type="button" onclick="generarPDF()">Generar PDF</button>
+  </form>
+
+  <script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+  let total = 700;
+  const totalDisplay = document.getElementById("total");
+  const botones = document.querySelectorAll(".extra-boton");
+
+  botones.forEach(boton => {
+    boton.addEventListener("click", () => {
+      const costo = parseFloat(boton.dataset.costo);
+      boton.classList.toggle("activo");
+
+      total += boton.classList.contains("activo") ? costo : -costo;
+      totalDisplay.textContent = `Total: $${total}`;
+    });
+  });
+});
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const versionesPorMarca = {
+        Toyota: ["4Runner","Avanza","Camry","Corolla","Corolla Cross","C-HR","Hiace","Hilux","Land Cruiser","Mirai","Prius","RAV4","Sequoia","Sienna","Tacoma","Tundra","Yaris","Yaris Sedán","GR86","GR Yaris","Supra","Fortuner"],
+        Nissan: ["Altima", "March", "Maxima", "NP300", "Pathfinder", "Sentra", "Tiida", "Versa", "X-Trail", "Armada", "Kicks", "Murano", "Frontier", "Z", "Leaf", "Urvan", "Magnite"],
+        Ford: ["Figo", "Fiesta", "Focus", "Fusion", "Escape", "Edge", "Explorer", "Expedition", "Bronco", "Bronco Sport", "Mustang", "Ranger", "Lobo", "Transit", "EcoSport", "Territory", "Everest", "Maverick"],
+        Chevrolet: ["Aveo", "Beat", "Captiva", "Cheyenne", "Cavalier", "Colorado", "Cruze", "Equinox", "GMC Terrain", "GMC Acadia", "GMC Yukon", "Groove", "Malibu", "Onix", "S10", "Spark", "Suburban", "Tahoe", "Tornado", "Tracker", "Trax", "Traverse", "Silverado", "Camaro", "Blazer EV"],
+        Volkswagen: ["Jetta", "Vento", "Virtus", "Polo", "Golf", "Gol", "Tiguan", "T-Cross", "Taos", "Teramont", "Passat", "Beetle", "Nivus", "Touareg", "Saveiro", "Amarok", "ID.4", "ID. Buzz"],
+        Honda: ["Accord", "BR-V", "City", "Civic", "CR-V", "Fit", "HR-V", "Odyssey", "Pilot", "Ridgeline", "WR-V", "Insight", "e:Ny1"],
+        Mazda: ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-50", "CX-60", "CX-70", "CX-90", "MX-5", "BT-50"],
+        KIA: ["Rio", "Forte", "K3", "Optima", "Stinger", "Soul", "Seltos", "Sportage", "Sorento", "Telluride", "Niro", "EV6", "Carens", "Carnival", "K5", "K900", "Pegas", "Stonic"],
+        Hyundai: ["Rio", "Forte", "K3", "Optima", "Stinger", "Soul", "Seltos", "Sportage", "Sorento", "Telluride", "Niro", "EV6", "Carens", "Carnival", "K5", "K900", "Pegas", "Stonic"],
+        Mitsibushi: ["Mirage", "Mirage G4", "Lancer", "Attrage", "Eclipse Cross", "Outlander", "Outlander Sport", "Montero", "Montero Sport", "Xpander", "Xpander Cross", "ASX", "L200"],
+        AUDI: ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q5", "Q7", "Q8", "e-tron", "e-tron GT", "RS 3", "RS 5", "RS 6", "RS 7", "RS Q3", "RS Q8", "S3", "S4", "S5", "S6", "S7", "S8", "TT", "TTS", "R8"],
+        BMW: ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "Serie 6", "Serie 7", "Serie 8",
+ "X1", "X2", "X3", "X4", "X5", "X6", "X7",
+ "Z4", "M2", "M3", "M4", "M5", "M8",
+ "i3", "i4", "i5", "i7", "iX", "iX1", "iX3"],
+        Dodge: ["Attitude", "Challenger", "Charger", "Durango", "Journey", "Neon", "Ram 700", "Ram 1500", "Ram 2500", "Ram 4000", "Ram ProMaster Rapid", "Ram ProMaster City", "Ram ProMaster", "Ram Van", "Vision"],
+        Otro: [""]
+      };
+
+      function actualizarVersiones() {
+        const marca = document.getElementById("marca").value;
+        const versionSelect = document.getElementById("version");
+        versionSelect.innerHTML = '<option value="">Selecciona una versión</option>';
+
+        if (versionesPorMarca[marca]) {
+          versionesPorMarca[marca].forEach(version => {
+            const option = document.createElement("option");
+            option.value = version;
+            option.textContent = version;
+            versionSelect.appendChild(option);
+          });
+        }
+      }
+
+      function poblarModelo() {
+        const modeloSelect = document.getElementById("modelo");
+        for (let año = 2025; año >= 2016; año--) {
+          const option = document.createElement("option");
+          option.value = año;
+          option.textContent = año;
+          modeloSelect.appendChild(option);
+        }
+      }
+const coloresPorMarca = {
+    Toyota: [
+  "Blanco Perlado",
+  "Gris Oxford",
+  "Negro Mica",
+  "Rojo Mica Metálico",
+  "Plata Metálico",
+  "Azul Metálico",
+  "Gris Grafito",
+  "Rojo Emoción",
+  "Azul Nebula",
+  "Verde Esmeralda",
+  "Bronce Metálico",
+  "Blanco con techo negro",
+  "Rojo con techo negro",
+  "Turquesa con techo negro"
+],
+  Nissan: [
+  "Blanco Perlado",
+  "Gris Oxford",
+  "Negro Obsidiana",
+  "Rojo Burdeos",
+  "Plata Brillante",
+  "Azul Eléctrico",
+  "Gris Metálico",
+  "Rojo Escarlata",
+  "Azul Cobalto",
+  "Gris Titanio",
+  "Negro Diamante",
+  "Blanco con techo negro",
+  "Rojo con techo negro",
+  "Azul con techo negro"
+],
+  Ford: [
+  "Blanco Oxford",
+  "Gris Magnético",
+  "Negro Obsidiana",
+  "Rojo Rubí",
+  "Azul Relámpago",
+  "Plata Metálico",
+  "Gris Carbón",
+  "Azul Nébula",
+  "Amarillo Solar",
+  "Rojo Cobrizo",
+  "Verde Selva",
+  "Naranja Cyber",
+  "Gris Piedra",
+  "Blanco con techo negro",
+  "Rojo con techo negro"
+],
+  Chevrolet: [
+  "Blanco Summit",
+  "Gris Satin Steel",
+  "Negro Onix",
+  "Rojo Carmín",
+  "Azul Eclipse",
+  "Plata Brillante",
+  "Gris Oxford",
+  "Rojo Metálico",
+  "Azul Marino",
+  "Negro Metálico",
+  "Gris Titanio",
+  "Blanco con techo negro",
+  "Rojo con techo negro"
+],
+  Volkswagen: [
+  "Blanco Candy",
+  "Gris Platino",
+  "Plata Sirius",
+  "Negro Ninja",
+  "Rojo Sunset",
+  "Azul Monterey",
+  "Gris Franela",
+  "Verde Vibrante",
+  "Negro Profundo",
+  "Plata Pirita",
+  "Blanco Puro con techo negro",
+  "Gris Platino con techo negro",
+  "Rojo Sunset con techo negro"
+],
+  Honda: [
+    "Blanco Platino", "Gris Meteoro", "Rojo Radiante", "Negro Cristal",
+    "Plata Solar", "Azul Cósmico", "Rojo Premium", "Negro Perlado",
+    "Acero", "Gris Lunar", "Azul Noche", "Verde Bosque"
+  ],
+  Mazda: [
+  "Rojo Brillante",
+  "Gris Polimetal",
+  "Azul Marino Profundo",
+  "Negro Celeste",
+  "Blanco Aperlado Mica",
+  "Plata Cerámico",
+  "Gris Titanio",
+  "Gris Machine",
+  "Negro Jet",
+  "Rojo Soul Crystal",
+  "Blanco Snowflake",
+  "Azul Deep Crystal"
+],
+KIA: [
+  "Blanco Snow White Pearl",
+  "Gris Steel Gray",
+  "Negro Aurora Black",
+  "Rojo Runway Red",
+  "Azul Mineral Blue",
+  "Plata Silky Silver",
+  "Gris Interstellar Gray",
+  "Rojo Inferno Red",
+  "Azul Neptune Blue",
+  "Verde Cityscape Green",
+  "Naranja Fusion Orange",
+  "Blanco con techo negro",
+  "Rojo con techo negro",
+  "Azul con techo negro"
+],
+Hyundai: [
+  "Blanco Polar",
+  "Gris Titanio",
+  "Negro Fantasma",
+  "Rojo Carmesí",
+  "Azul Intenso",
+  "Plata Metálico",
+  "Gris Oxford",
+  "Azul Denim",
+  "Verde Amazon",
+  "Naranja Lava",
+  "Blanco con techo negro",
+  "Rojo con techo negro"
+],
+Mitsibushi: [
+  "White Diamond",
+  "Jet Black Mica",
+  "Graphite Gray Metallic",
+  "Impulse Blue Metallic",
+  "Red Solid",
+  "Blade Silver Metallic",
+  "Titanium Gray",
+  "Bronze Metallic",
+  "Deep Blue Mica",
+  "White Solid",
+  "Yamabuki Orange Metallic"
+],
+AUDI: [
+  "White Diamond",
+  "Jet Black Mica",
+  "Graphite Gray Metallic",
+  "Impulse Blue Metallic",
+  "Red Solid",
+  "Blade Silver Metallic",
+  "Titanium Gray",
+  "Bronze Metallic",
+  "Deep Blue Mica",
+  "White Solid",
+  "Yamabuki Orange Metallic"
+],
+BMW: [
+  "Blanco Alpino",
+  "Negro Zafiro",
+  "Gris Mineral",
+  "Gris Brooklyn",
+  "Azul Portimao",
+  "Azul Tanzanita",
+  "Rojo Melbourne",
+  "Rojo Aventurine",
+  "Azul San Remo",
+  "Gris Skyscraper",
+  "Verde Isle of Man",
+  "Azul Le Mans",
+  "Gris Dravit",
+  "Azul Frozen Marina Bay",
+  "Negro Frozen Deep",
+  "Gris Frozen Pure",
+  "Amarillo Sao Paulo",
+  "Naranja Sunset",
+  "Violeta Daytona",
+  "Verde Java"
+],
+Dodge: [
+  "Blanco Brillante",
+  "Negro Onix",
+  "Gris Granito",
+  "Rojo Furia",
+  "Plata Metálico",
+  "Azul Acero",
+  "Gris Carbón",
+  "Rojo Octano",
+  "Gris Ceniza",
+  "Blanco Perlado",
+  "Negro con techo rojo",
+  "Rojo con techo negro"
+],
+};
+
+function actualizarColores() {
+  const marca = document.getElementById("marca").value;
+  const colorSelect = document.getElementById("color");
+
+  colorSelect.innerHTML = '<option value="">Selecciona</option>';
+
+  if (coloresPorMarca[marca]) {
+    coloresPorMarca[marca].forEach(color => {
+      const opcion = document.createElement("option");
+      opcion.value = color;
+      opcion.textContent = color;
+      colorSelect.appendChild(opcion);
+    });
+  }
+}
+document.getElementById("marca").addEventListener("change", () => {
+  actualizarVersiones();  // si ya lo tienes
+  actualizarColores();    // asegúrate de incluir esta línea
+});
+
+
+      // Ejecutar inicialización
+      poblarModelo();
+
+      // Conectar evento
+      document.getElementById("marca").addEventListener("change", actualizarVersiones);
+
+      // Exportación a PDF
+window.generarPDF = function () {
+
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const margenIzq = 20;
+  let posY = 30;
+  const interlineado = 9;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(40, 40, 80);
+  doc.text("Ficha Técnica del Vehículo", margenIzq, 20);
+
+  doc.setDrawColor(150);
+  doc.setLineWidth(0.5);
+  doc.line(margenIzq, 22, 190, 22);
+
+  const datos = [
+    { label: "Marca", value: document.getElementById("marca")?.value },
+    { label: "Versión", value: document.getElementById("version")?.value },
+    { label: "Modelo", value: document.getElementById("modelo")?.value },
+    { label: "NIV", value: document.getElementById("niv")?.value },
+    { label: "Número de Motor", value: document.getElementById("motor")?.value },
+    { label: "Color Exterior", value: document.getElementById("color")?.value },
+    { label: "Interior", value: `${document.getElementById("int")?.value || ""} ${document.getElementById("colorint")?.value || ""}`.trim() },
+    { label: "Placa", value: document.getElementById("placa")?.value },
+    { label: "Cilindros", value: document.getElementById("cilindros")?.value },
+    { label: "Transmisión", value: document.getElementById("transmision")?.value },
+    { label: "¿Primer dueño?", value: document.getElementById("primerDueno")?.value },
+    { label: "Nombre del dueño actual", value: document.getElementById("duenoactual")?.value },
+    { label: "Desde", value: document.getElementById("anocambio")?.value },
+    { label: "Cambio de placas", value: document.getElementById("nuevaplaca")?.value },
+    { label: "De", value: document.getElementById("estadoplacanueva")?.value },
+    { label: "Desde", value: document.getElementById("anocambioplaca")?.value }
+  ];
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(12);
+
+  datos.forEach((item) => {
+    if (item?.value) {
+      doc.setTextColor(0);
+      doc.text(`${item.label}:`, margenIzq, posY);
+      doc.setTextColor(60, 60, 60);
+      doc.text(String(item.value), margenIzq + 50, posY);
+      posY += interlineado;
+
+      if (posY > 250) {
+        doc.addPage();
+        posY = 20;
+      }
+    }
+  });
+
+  const resumen = obtenerResumenDeExtras();
+const total = resumen.total;
+const extras = resumen.extras;
+const totalTexto = convertirNumeroALetras(total);
+
+// Ajusta posición si estás usando una variable posY para ubicación
+doc.setFont("helvetica", "bold");
+doc.setFontSize(13);
+doc.text("Extras seleccionados", 20, posY); posY += 8;
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(11);
+
+if (extras.length === 0) {
+  doc.text("• Ninguno", 25, posY);
+  posY += 6;
+} else {
+  extras.forEach(extra => {
+    doc.text(`• ${extra.nombre} `, 25, posY);
+    posY += 6;
+  });
+}
+
+posY += 6;
+doc.setFont("helvetica", "bold");
+doc.setFontSize(12);
+doc.text(`Total: $${total}`, 20, posY); posY += 6;
+
+doc.setFont("helvetica", "italic");
+doc.setFontSize(11);
+doc.text(`(${totalTexto.charAt(0).toUpperCase() + totalTexto.slice(1)})`, 25, posY);
+ 
+
+
+  // Firma ASCII al pie
+  const firma = [
+    "       (-(-_(-_-)_-)-)",
+    " Dirty Deeds Done Dirt Cheap",
+  ];
+
+  doc.setFontSize(10);
+  doc.setFont("courier", "italic");
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  firma.forEach((linea, i) => {
+    const textWidth = doc.getTextWidth(linea);
+    const x = pageWidth - textWidth - 15;
+    const y = pageHeight - 15 + i * 5;
+    doc.text(linea, x, y);
+  });
+
+  doc.save(`${document.getElementById("marca")?.value || ""} ${document.getElementById("version")?.value || ""} ${document.getElementById("color")?.value || ""} ${document.getElementById("modelo")?.value || ""}`.trim());
+};
+    });
+  </script>
+</body>
+</html>

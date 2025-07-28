@@ -960,12 +960,12 @@ function convertirNumeroALetras(num) {
   tipoSelect.innerHTML = '<option value="">Selecciona una versión</option>';
 
   if (tiposPorVersion[version]) {
-    tiposPorVersion[version].forEach(tipo => {
-      const option = document.createElement("option");
-      option.value = clasetipo;
-      option.textContent = clasetipo;
-      tipoSelect.appendChild(option);
-    });
+tiposPorVersion[version].forEach(tipo => {
+  const option = document.createElement("option");
+  option.value = tipo;
+  option.textContent = tipo;
+  tipoSelect.appendChild(option);
+});
   }
 }
 document.getElementById("version").addEventListener("change", actualizarTipos);

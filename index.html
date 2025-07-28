@@ -962,8 +962,8 @@ function convertirNumeroALetras(num) {
   if (tiposPorVersion[version]) {
 tiposPorVersion[version].forEach(tipo => {
   const option = document.createElement("option");
-  option.value = tipo;
-  option.textContent = tipo;
+  option.value = version;
+  option.textContent = version;
   tipoSelect.appendChild(option);
 });
   }

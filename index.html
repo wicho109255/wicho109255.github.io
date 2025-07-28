@@ -977,8 +977,8 @@ document.getElementById("version").addEventListener("change", actualizarTipos);
         if (versionesPorMarca[marca]) {
           versionesPorMarca[marca].forEach(version => {
             const option = document.createElement("option");
-            option.value = version;
-            option.textContent = version;
+            option.value = tipo;
+option.textContent = tipo;
             versionSelect.appendChild(option);
           });
         }
